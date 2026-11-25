@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Zufallszahlen">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Zufallszahlen</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131e30;--panel2:#1b2940;--line:#2b3a51;--text:#f4f7fb;--muted:#a9b6c8;--green:#32c477;--red:#ff7777}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
+main{max-width:760px;margin:auto;padding:20px 0 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.eyebrow{color:var(--muted);font-size:11px;letter-spacing:.14em;font-weight:700}h1{font-size:28px;margin:5px 0 18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px;margin:13px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;color:var(--muted);font-size:13px;margin:0 0 7px}input{width:100%;background:#0b1423;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:13px;font-size:18px;min-width:0}input[type=checkbox]{width:20px;height:20px;accent-color:var(--green)}button{border:0;border-radius:13px;padding:14px 16px;font-size:16px;font-weight:700;cursor:pointer;min-height:48px}button:disabled{opacity:.4;cursor:not-allowed}.primary{background:var(--green);color:#062114;width:100%;font-size:19px;min-height:60px}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.danger{color:#ffd2d2;border:1px solid #70404a;background:#321d29}.row{display:flex;align-items:center;gap:10px;justify-content:space-between}.numberbox{background:linear-gradient(145deg,#17263b,#101a2b);border:1px solid var(--line);border-radius:16px;padding:20px;text-align:center;margin:15px 0}.number{font-size:clamp(64px,18vw,104px);font-weight:800;line-height:1.05;color:var(--green);font-variant-numeric:tabular-nums}.sub{color:var(--muted);font-size:13px}.section-title{font-size:18px;font-weight:750;margin:0 0 14px}.stat{display:grid;grid-template-columns:42px 1fr 50px 90px;gap:9px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}.stat:last-child{border-bottom:0}.count{font-variant-numeric:tabular-nums;text-align:right;font-weight:750}.bar{height:9px;border-radius:99px;background:#26344a;overflow:hidden}.fill{height:100%;background:#71849f;border-radius:99px}.winner .fill{background:var(--green)}.winner .num,.winner .count{color:var(--green)}.pill{font-size:11px;padding:5px 7px;border-radius:99px;background:#19452f;color:#a8f0c7;text-align:center}.hidebtn{padding:7px 9px;min-height:34px;font-size:12px}.muted{color:var(--muted)}.error{color:#ffaaaa;font-size:13px;margin-top:10px}.settings{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px;margin:10px 0}.weight{width:74px;padding:8px;font-size:15px}.small{font-size:12px;color:var(--muted);line-height:1.45}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:420px){.stat{grid-template-columns:32px 1fr 42px 78px;gap:7px}.panel{padding:14px}.hidebtn{font-size:11px;padding:6px}}
+</style>
+</head>
+<body>
+<main>
+ <div class="top"><div><div class="eyebrow">DEIN ZUFALLSGENERATOR</div><h1>Zufallszahlen</h1></div><span class="pill">Sitzung</span></div>
+ <section class="panel">
+  <div class="section-title">1. Zahlenbereich</div>
+  <div class="grid"><div><label for="lower">Untergrenze</label><input id="lower" type="number" value="1" step="1"></div><div><label for="upper">Obergrenze</label><input id="upper" type="number" value="10" step="1"></div></div>
+  <div class="row" style="margin-top:12px"><span id="rangeInfo" class="small">10 mögliche Zahlen</span><button class="secondary" id="apply">Bereich übernehmen</button></div>
+ </section>
+ <section class="panel">
+  <div class="section-title">2. Gewinngrenze</div>
+  <div class="grid"><div><label for="goal">Treffer bis zum Gewinn</label><input id="goal" type="number" min="1" value="3"></div><div><label>Gewinner (nicht ausgeblendet)</label><div id="winnerCount" style="font-size:30px;font-weight:800">0</div></div></div>
+ </section>
+ <section class="panel">
+  <div class="section-title">3. Zufallsziehung</div>
+  <div class="numberbox"><div class="eyebrow">LETZTE GEZOGENE ZAHL</div><div class="number" id="last">–</div><div class="sub" id="lastInfo">Drücke auf den Knopf, um zu starten.</div></div>
+  <button class="primary" id="draw">↗ Zufallszahl ziehen</button><div id="error" class="error" role="status"></div>
+  <div class="row" style="margin-top:13px"><span class="muted">Bisherige Ziehungen</span><strong id="total">0</strong></div>
+ </section>
+ <section class="panel">
+  <div class="row"><div class="section-title">4. Statistik</div><span class="pill" id="winnerPill">0 Gewinner</span></div>
+  <div id="stats"><div class="small">Noch keine Zahlen gezogen.</div></div>
+ </section>
+ <section class="panel">
+  <div class="section-title">5. Gewichtung</div>
+  <label class="settings"><input id="weighting" type="checkbox"> Individuelle Gewichtung aktivieren</label>
+  <div class="small">Standardmäßig hat jede Zahl die gleiche Chance. Bei aktivierter Gewichtung kannst du für jede Zahl einen Faktor einstellen. 2 bedeutet doppelte Chance gegenüber 1; 0 schließt die Zahl aus.</div><div id="weightControls"></div>
+ </section>
+ <section class="panel">
+  <div class="section-title">6. Verwaltung</div>
+  <div class="actions"><button class="secondary danger" id="reset">Statistik zurücksetzen</button><button class="secondary" id="showAll">Alle einblenden</button></div>
+  <p class="small">Es werden keine Daten dauerhaft gespeichert. Beim Neuladen oder Schließen beginnt alles wieder bei null.</p>
+ </section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let lower=1, upper=10, goal=3, counts={}, weights={}, hidden=new Set(), last=null, weighting=false;
+function valid(){return Number.isInteger(lower)&&Number.isInteger(upper)&&upper>=lower&&upper-lower<=499&&Number.isInteger(goal)&&goal>=1}
+function nums(){return Array.from({length:upper-lower+1},(_,i)=>lower+i)}
+function setError(s){$('error').textContent=s}
+function applyRange(){const l=Number($('lower').value),u=Number($('upper').value),g=Number($('goal').value);if(!Number.isInteger(l)||!Number.isInteger(u)||u<l||u-l>499){setError('Bitte einen gültigen ganzzahligen Bereich mit maximal 500 Zahlen eingeben.');return}if(!Number.isInteger(g)||g<1){setError('Die Gewinngrenze muss eine positive ganze Zahl sein.');return}lower=l;upper=u;goal=g;counts={};hidden=new Set();weights={};last=null;setError('');render()}
+function syncGoal(){const g=Number($('goal').value);if(!Number.isInteger(g)||g<1){setError('Die Gewinngrenze muss eine positive ganze Zahl sein.');return false}goal=g;setError('');return true}
+function draw(){if(!syncGoal())return;const available=nums().filter(n=>!hidden.has(n));if(!available.length){setError('Keine Zahlen mehr verfügbar. Blende mindestens eine Zahl wieder ein.');return}const entries=available.map(n=>({n,w:weighting?Math.max(0,Number(weights[n]??1)||0):1}));const sum=entries.reduce((s,e)=>s+e.w,0);if(sum<=0){setError('Mindestens eine verfügbare Zahl braucht ein Gewicht größer null.');return}let r=Math.random()*sum,chosen=entries[entries.length-1].n;for(const e of entries){r-=e.w;if(r<0){chosen=e.n;break}}counts[chosen]=(counts[chosen]||0)+1;last=chosen;setError('');render()}
+function hide(n){hidden.add(n);render()}
+function render(){const all=nums(),winners=all.filter(n=>(counts[n]||0)>=goal),drawn=all.filter(n=>(counts[n]||0)>0).sort((a,b)=>(counts[b]||0)-(counts[a]||0)||a-b),total=all.reduce((s,n)=>s+(counts[n]||0),0),max=Math.max(1,...drawn.map(n=>counts[n]));$('rangeInfo').textContent=all.length+' mögliche Zahlen';$('winnerCount').textContent=winners.filter(n=>!hidden.has(n)).length;$('winnerPill').textContent=winners.length+' Gewinner';$('total').textContent=total;$('last').textContent=last===null?'–':last;$('lastInfo').textContent=last===null?'Drücke auf den Knopf, um zu starten.':(counts[last]||0)+' Treffer insgesamt für diese Zahl';
+$('stats').innerHTML=drawn.length?'':'<div class="small">Noch keine Zahlen gezogen.</div>';
+for(const n of drawn){const c=counts[n],win=c>=goal,isHidden=hidden.has(n);const row=document.createElement('div');row.className='stat'+(win?' winner':'');const num=document.createElement('strong');num.className='num';num.textContent=n;const bar=document.createElement('div');bar.className='bar';const fill=document.createElement('div');fill.className='fill';fill.style.width=(c/max*100)+'%';bar.append(fill);const count=document.createElement('div');count.className='count';count.textContent=c+'×';row.append(num,bar,count);
+if(win&&!isHidden){const b=document.createElement('button');b.className='secondary hidebtn';b.textContent='Ausblenden';b.addEventListener('click',()=>hide(n));row.append(b)}else if(isHidden){const b=document.createElement('span');b.className='pill';b.textContent='Aus';row.append(b)}else{const b=document.createElement('span');b.textContent='';row.append(b)}
+$('stats').append(row);
+}
+const wc=$('weightControls');wc.innerHTML='';
+if(weighting){for(const n of all){const wr=document.createElement('div');wr.className='row';wr.style.padding='8px 0';wr.style.borderBottom='1px solid var(--line)';const lab=document.createElement('span');lab.textContent='Zahl '+n;const inp=document.createElement('input');inp.className='weight';inp.type='number';inp.min='0';inp.step='0.1';inp.value=weights[n]??1;inp.setAttribute('aria-label','Gewichtung für Zahl '+n);inp.addEventListener('change',()=>{weights[n]=inp.value;});wr.append(lab,inp);wc.append(wr)}}
+}}
+$('apply').addEventListener('click',applyRange);$('draw').addEventListener('click',draw);$('goal').addEventListener('change',()=>{if(syncGoal())render()});$('weighting').addEventListener('change',e=>{weighting=e.target.checked;render()});$('reset').addEventListener('click',()=>{counts={};hidden=new Set();last=null;setError('');render()});$('showAll').addEventListener('click',()=>{hidden.clear();setError('');render()});
+render();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+</script>
+</body></html>
